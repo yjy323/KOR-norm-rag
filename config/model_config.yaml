@@ -1,0 +1,26 @@
+# Model Configuration
+model:
+  name: "llama2-7b-chat"
+  type: "llm"
+  max_tokens: 2048
+  temperature: 0.7
+  top_p: 0.9
+
+# Embedding Configuration
+embedding:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  dimension: 384
+  batch_size: 32
+
+# Vector Database Configuration
+vector_db:
+  type: "faiss"
+  index_type: "flat"
+  similarity_metric: "cosine"
+
+# Retrieval Configuration
+retrieval:
+  top_k: 5
+  similarity_threshold: 0.7
+  rerank: true
+  rerank_model: "cross-encoder/ms-marco-MiniLM-L-2-v2"

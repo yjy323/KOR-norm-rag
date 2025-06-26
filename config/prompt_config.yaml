@@ -1,0 +1,35 @@
+# Prompt Templates Configuration
+prompts:
+  system_prompt: |
+    You are a helpful AI assistant that provides accurate and contextual responses based on the given knowledge base.
+    Always ground your responses in the provided context and cite sources when possible.
+
+  rag_prompt: |
+    Based on the following context, please answer the question accurately and comprehensively.
+    
+    Context:
+    {context}
+    
+    Question: {question}
+    
+    Answer:
+
+  retrieval_prompt: |
+    Given the following query, identify the most relevant information needed to provide a comprehensive answer.
+    
+    Query: {query}
+    
+    Key topics to search for:
+
+  evaluation_prompt: |
+    Evaluate the quality of the following response based on:
+    1. Accuracy
+    2. Completeness
+    3. Relevance to the question
+    4. Use of provided context
+    
+    Question: {question}
+    Context: {context}
+    Response: {response}
+    
+    Evaluation:
