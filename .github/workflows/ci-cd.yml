@@ -1,0 +1,13 @@
+name: CI and CD Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    name: Placeholder job
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: No-op
+      run: echo "GitHub Actions temporarily disabled"
