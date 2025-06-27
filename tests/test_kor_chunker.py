@@ -10,7 +10,7 @@ from src.knowledge_base.loading.pdf_loader import PDFLoader
 def test_rag_chunking():
     pdf_path = "data/국어 지식 기반 생성(RAG) 참조 문서.pdf"
     preview = 3
-    
+
     # Step 1: Load PDF
     loader = PDFLoader(pdf_path)
     docs = loader.load()
