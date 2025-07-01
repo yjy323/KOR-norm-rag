@@ -50,6 +50,23 @@ class SentenceTransformersEmbedding:
         """
         return self._embedding_dim
 
+    def embed_text(self, text: str) -> List[float]:
+        """
+        단일 텍스트를 임베딩 벡터로 변환합니다. (LangChain FAISS 호환)
+
+        Args:
+            text: 임베딩할 텍스트
+
+        Returns:
+            임베딩 벡터 리스트
+        """
+        if not text or not text.strip():
+            raise ValueError("입력 텍스트가 비어있습니다.")
+
+        cleaned_text = self._preprocess_text(text)
+        embedding = self.model.encode(cleaned_text, convert_to_numpy=True)
+        return embedding.tolist()
+
     def embed_texts(self, texts: List[str]) -> np.ndarray:
         """
         여러 텍스트를 배치로 임베딩 벡터로 변환합니다.
