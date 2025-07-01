@@ -9,7 +9,7 @@ class SentenceTransformersEmbedding:
     """
     SentenceTransformer 기반 텍스트 임베딩 클래스
 
-    sentence-transformers 라이브러리를 사용하여 텍스트를 벡터로 변환합니다.
+    KORChunker 파이프라인과 연동하여 한국어 텍스트를 벡터로 변환합니다.
     """
 
     def __init__(
@@ -28,7 +28,6 @@ class SentenceTransformersEmbedding:
         self.device = device
         self.model = None
         self._embedding_dim = None
-
         self._load_model()
 
     def _load_model(self) -> None:
@@ -51,27 +50,6 @@ class SentenceTransformersEmbedding:
         """
         return self._embedding_dim
 
-    def embed_text(self, text: str) -> np.ndarray:
-        """
-        단일 텍스트를 임베딩 벡터로 변환합니다.
-
-        Args:
-            text: 임베딩할 텍스트
-
-        Returns:
-            임베딩 벡터 (numpy array)
-        """
-        if not text or not text.strip():
-            raise ValueError("입력 텍스트가 비어있습니다.")
-
-        # 기본 텍스트 전처리
-        cleaned_text = self._preprocess_text(text)
-
-        # 임베딩 생성
-        embedding = self.model.encode(cleaned_text, convert_to_numpy=True)
-
-        return embedding
-
     def embed_texts(self, texts: List[str]) -> np.ndarray:
         """
         여러 텍스트를 배치로 임베딩 벡터로 변환합니다.
@@ -85,54 +63,15 @@ class SentenceTransformersEmbedding:
         if not texts:
             raise ValueError("입력 텍스트 리스트가 비어있습니다.")
 
-        # 빈 텍스트 검증
         for i, text in enumerate(texts):
             if not text or not text.strip():
                 raise ValueError(f"인덱스 {i}의 텍스트가 비어있습니다.")
 
-        # 배치 텍스트 전처리
         cleaned_texts = [self._preprocess_text(text) for text in texts]
-
-        # 배치 임베딩 생성
         embeddings = self.model.encode(
             cleaned_texts, convert_to_numpy=True, show_progress_bar=True
         )
-
         return embeddings
-
-    def embed_chunks(self, chunks: List[dict]) -> np.ndarray:
-        """
-        청크 리스트를 임베딩 벡터로 변환합니다.
-
-        Args:
-            chunks: 청크 딕셔너리 리스트 (각 청크는 'content' 키를 포함해야 함)
-
-        Returns:
-            임베딩 벡터 배열 (shape: [len(chunks), embedding_dim])
-        """
-        if not chunks:
-            raise ValueError("청크 리스트가 비어있습니다.")
-
-        # 청크에서 content 추출
-        texts = []
-        for i, chunk in enumerate(chunks):
-            if "content" not in chunk:
-                raise ValueError(f"인덱스 {i}의 청크에 'content' 키가 없습니다.")
-            texts.append(chunk["content"])
-
-        return self.embed_texts(texts)
-
-    def embed_query(self, query: str) -> np.ndarray:
-        """
-        검색 쿼리를 임베딩 벡터로 변환합니다.
-
-        Args:
-            query: 검색 쿼리 텍스트
-
-        Returns:
-            임베딩 벡터 (numpy array)
-        """
-        return self.embed_text(query)
 
     def _preprocess_text(self, text: str) -> str:
         """
@@ -146,27 +85,7 @@ class SentenceTransformersEmbedding:
         """
         import re
 
-        # 기본 정리
         text = text.strip()
-
-        # 연속된 공백을 단일 공백으로 변환
         text = re.sub(r"\s+", " ", text)
-
-        # 연속된 줄바꿈을 단일 공백으로 변환
         text = re.sub(r"\n+", " ", text)
-
         return text
-
-    def get_model_info(self) -> dict:
-        """
-        모델 정보를 반환합니다.
-
-        Returns:
-            모델 정보 딕셔너리
-        """
-        return {
-            "model_name": self.model_name,
-            "device": self.device,
-            "embedding_dim": self._embedding_dim,
-            "max_seq_length": getattr(self.model, "max_seq_length", None),
-        }
