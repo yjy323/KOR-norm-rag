@@ -22,21 +22,14 @@ class KORPipeline:
     PDF 로딩 -> 청킹 -> 임베딩 -> 벡터 저장소 저장
     """
 
-    def __init__(
-        self,
-        embedding_model_name: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-        device: str = "cpu",
-    ):
+    def __init__(self, embedding_model: SentenceTransformersEmbedding):
         """
         파이프라인 초기화
 
         Args:
-            embedding_model_name: 사용할 임베딩 모델명
-            device: 실행 장치 ("cpu" 또는 "cuda")
+            embedding_model: 임베딩 모델 인스턴스
         """
-        self.embedding_model = SentenceTransformersEmbedding(
-            model_name=embedding_model_name, device=device
-        )
+        self.embedding_model = embedding_model
         self.vector_store = FAISSVectorStore(self.embedding_model)
 
     def process_pdf(
@@ -116,9 +109,16 @@ def main():
     document_name = "국어_지식_기반_생성_RAG_참조_문서"
 
     try:
+        # 임베딩 모델 초기화
+        logging.info("임베딩 모델 초기화")
+        embedding_model = SentenceTransformersEmbedding(
+            model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+            device="cpu",
+        )
+
         # 파이프라인 초기화
         logging.info("Knowledge Base Pipeline 초기화")
-        pipeline = KORPipeline()
+        pipeline = KORPipeline(embedding_model)
 
         # Knowledge Base 구축
         logging.info(f"PDF 처리 시작: {pdf_path}")
