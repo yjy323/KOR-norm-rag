@@ -2,10 +2,11 @@ import logging
 from typing import List
 
 import numpy as np
+from langchain_core.embeddings import Embeddings
 from sentence_transformers import SentenceTransformer
 
 
-class SentenceTransformersEmbedding:
+class SentenceTransformersEmbedding(Embeddings):
     """
     SentenceTransformer 기반 텍스트 임베딩 클래스
 
@@ -106,3 +107,12 @@ class SentenceTransformersEmbedding:
         text = re.sub(r"\s+", " ", text)
         text = re.sub(r"\n+", " ", text)
         return text
+
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        """LangChain Embeddings 인터페이스 구현: 문서들을 임베딩으로 변환"""
+        embeddings = self.embed_texts(texts)
+        return embeddings.tolist()
+
+    def embed_query(self, text: str) -> List[float]:
+        """LangChain Embeddings 인터페이스 구현: 쿼리를 임베딩으로 변환"""
+        return self.embed_text(text)

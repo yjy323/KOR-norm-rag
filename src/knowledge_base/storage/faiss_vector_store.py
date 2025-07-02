@@ -26,7 +26,7 @@ class FAISSVectorStore:
         dimension_size = embedding_model.get_embedding_dim()
 
         self.db = FAISS(
-            embedding_function=embedding_model.embed_text,
+            embedding_function=embedding_model,
             index=faiss.IndexFlatL2(dimension_size),
             docstore=InMemoryDocstore(),
             index_to_docstore_id={},
@@ -59,6 +59,6 @@ class FAISSVectorStore:
         """
         self.db = FAISS.load_local(
             path,
-            embeddings=self.embedding_model.embed_text,
+            embeddings=self.embedding_model,
             allow_dangerous_deserialization=True,
         )
